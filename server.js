@@ -1,31 +1,30 @@
 const express = require('express');
 const http = require('http');
-const webSocket = require('ws');
-
+const WebSocket = require('ws');
 
 const app = express();
 const server = http.createServer(app);
-const wss = new webSocket.Server({ server });
+const wss = new WebSocket.Server({ server });
 
-//connection websocket
+app.use(express.static('public'));
+
+// Connexion WebSocket
 wss.on('connection', (ws) => {
-    //connection websocket
+    // Gestion des messages reçus du client
     ws.on('message', (message) => {
-        //gestion des message recu du client
+        // Envoi du message à tous les clients connectés
+        console.log(`Message received: ${message}`);
         wss.clients.forEach((client) => {
-            //envoie du message a tous les client connecte
-            if (client !== ws && client.readyState === webSocket.OPEN) {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
                 client.send(message);
             }
         });
     });
-})
+});
 
-
-//Demarrage du serveur
-
+// Démarrage du serveur
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
-    console.log(`server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });
