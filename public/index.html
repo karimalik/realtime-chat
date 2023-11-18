@@ -10,10 +10,27 @@
 </head>
 <body class="container mt-5">
 
-    <!-- Zone de chat -->
-    <div class="card">
+    <!-- Formulaire de connexion -->
+    <div class="card" id="loginContainer">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Real-time Chat</h5>
+            <h5 class="mb-0">Connexion</h5>
+        </div>
+        <div class="card-body">
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nom d'utilisateur</label>
+                    <input type="text" class="form-control" id="username" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Zone de chat (initiallement masquée) -->
+    <div id="chatContainer" class="card d-none mt-3">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Royal Chat</h5>
+            <p id="connectionStatus" class="mb-0 text-white">Connecté en tant que: <span id="usernameDisplay"></span></p>
         </div>
         <div class="card-body" style="max-height: 300px; overflow-y: auto;">
             <ul class="list-group" id="chatMessages"></ul>
@@ -35,7 +52,18 @@
 
     <!-- Votre script WebSocket -->
     <script>
+        let username = '';
+
         const socket = new WebSocket('ws://localhost:3000');
+
+        // Attendre la connexion WebSocket avant de traiter les messages
+        socket.addEventListener('open', (event) => {
+            document.getElementById('loginForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                username = document.getElementById('username').value;
+                showChat();
+            });
+        });
 
         socket.onmessage = (event) => {
             // Convertir les données de type Blob en chaîne de caractères
@@ -52,7 +80,7 @@
         function sendMessage() {
             const messageInput = document.getElementById('messageInput');
             const message = messageInput.value;
-            socket.send(message);
+            socket.send(`${username}: ${message}`);
             messageInput.value = '';
         }
 
@@ -62,6 +90,15 @@
             message.className = 'list-group-item';
             message.textContent = messageText;
             document.getElementById('chatMessages').appendChild(message);
+        }
+
+        function showChat() {
+            // Masquer le formulaire de connexion et afficher la zone de chat
+            document.getElementById('loginContainer').classList.add('d-none');
+            document.getElementById('chatContainer').classList.remove('d-none');
+            document.getElementById('usernameDisplay').textContent = username;
+            document.getElementById('connectionStatus').classList.remove('text-light');
+            document.getElementById('connectionStatus').classList.add('text-success');
         }
     </script>
 </body>
