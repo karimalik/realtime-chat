@@ -13,14 +13,14 @@
     <!-- Zone de chat -->
     <div class="card">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Royal Chat</h5>
+            <h5 class="mb-0">Real-time Chat</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
             <ul class="list-group" id="chatMessages"></ul>
         </div>
         <div class="card-footer">
             <div class="input-group">
-                <input type="text" id="messageInput" class="form-control rounded-0" placeholder="Entrer votre message">
+                <input type="text" id="messageInput" class="form-control rounded-0" placeholder="Type your message">
                 <div class="input-group-append">
                     <button onclick="sendMessage()" class="btn btn-primary rounded-0">Envoyer</button>
                 </div>
